@@ -2,7 +2,7 @@
 
 - name: Set archive_filename variable.
   set_fact:
-    archive_filename: "{{ ansible_hostname}}_logs.tar.{{ log_archive_format}}"
+    archive_filename: "{{ ansible_hostname }}_logs.tar.{{ log_archive_format }}"
 
 - name: Archive logs.
   archive:
