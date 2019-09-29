@@ -1,0 +1,46 @@
+---
+
+- name: Set archive_filename variable.
+  set_fact:
+    archive_filename: "{{ ansible_hostname}}_logs.tar.{{ log_archive_format}}"
+
+- name: Archive logs.
+  archive:
+    path: "{{ log_find_path }}"
+    dest: "/tmp/{{ archive_filename }}"
+    format: "{{ log_archive_format }}"
+
+- name: Fetch logs.
+  fetch:
+    src: "/tmp/{{ archive_filename }}"
+    dest: logs
+
+- name: Find logs.
+  find:
+    paths: logs
+    patterns: "{{ archive_filename }}"
+    recurse: yes
+  register: _logs
+  delegate_to: localhost
+
+- name: Send e-mail, attaching files.
+  mail:
+    host: "{{ log_email_host }}"
+    port: "{{ log_email_port }}"
+    username: "{{ log_email_username | default(omit) }}"
+    password: "{{ log_email_password | default(omit) }}"
+    subject: "[Ansible] Logs from {{ ansible_hostname }}"
+    body: "Attached are logs from {{ log_find_path }} on {{ ansible_fqdn }}."
+    from: "{{ log_from }}"
+    to: "{{ log_to }}"
+    attach: "{{ item.path }}"
+    charset: us-ascii
+  with_items: "{{ _logs.files }}"
+  delegate_to: localhost
+
+- name: Cleanup log archive.
+  file:
+    state: absent
+    path: "{{ item.path }}"
+  with_items: "{{ _logs.files }}"
+  delegate_to: localhost

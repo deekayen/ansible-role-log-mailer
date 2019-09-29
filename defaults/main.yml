@@ -1,0 +1,8 @@
+---
+
+log_find_path: /var/log
+log_archive_format: bz2
+log_from: awx@tower.example.com
+log_to: log_team@example.com
+log_email_host: email-smtp.us-east-1.amazonaws.com
+log_email_port: 25
