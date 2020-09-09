@@ -9,6 +9,7 @@
     path: "{{ log_find_path }}"
     dest: "/tmp/{{ archive_filename }}"
     format: "{{ log_archive_format }}"
+    mode: 0644
 
 - name: Fetch logs.
   fetch:
