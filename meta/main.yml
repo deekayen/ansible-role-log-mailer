@@ -3,6 +3,7 @@ galaxy_info:
   author: David Norman
   description: Email logs from a remote server.
 
+  github_branch: main
   issue_tracker_url: https://github.com/deekayen/ansible-role-log-mailer/issues
 
   license: BSD-3-Clause
