@@ -1,7 +1,7 @@
 Log Mailer
 ==========
 
-[![Build Status](https://travis-ci.org/deekayen/ansible-role-log-mailer.svg?branch=master)](https://travis-ci.org/deekayen/ansible-role-log-mailer)[![Project Status: Concept – Minimal or no implementation has been done yet, or the repository is only intended to be a limited example, demo, or proof-of-concept.](https://www.repostatus.org/badges/latest/concept.svg)](https://www.repostatus.org/#concept)
+[![Build Status](https://travis-ci.org/deekayen/ansible-role-log-mailer.svg?branch=main)](https://travis-ci.org/deekayen/ansible-role-log-mailer) [![Project Status: Concept – Minimal or no implementation has been done yet, or the repository is only intended to be a limited example, demo, or proof-of-concept.](https://www.repostatus.org/badges/latest/concept.svg)](https://www.repostatus.org/#concept)
 
 Email logs from a remote server. This role is intended for users who would like to do debugging or system diagnosis when they have access to login through an Ansible proxy like Tower or Jenkins, but not by direct SSH.
 
