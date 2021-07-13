@@ -3,4 +3,4 @@
   connection: local
 
   roles:
-    - ansible-role-log-mailer
+    - deekayen.log_mailer

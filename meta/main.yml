@@ -1,5 +1,8 @@
+---
+
 galaxy_info:
   role_name: log_mailer
+  namespace: deekayen
   author: David Norman
   description: Email logs from a remote server.
 
