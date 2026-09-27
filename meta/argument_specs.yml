@@ -1,0 +1,47 @@
+---
+argument_specs:
+  main:
+    short_description: Email logs from a remote server.
+    description:
+      - Archives a log directory on the managed host, fetches the archive
+        to the controller, e-mails it as an attachment, and removes the
+        fetched copy.
+    author:
+      - David Norman
+    options:
+      log_find_path:
+        type: path
+        default: /var/log
+        description: Directory on the managed host to archive.
+      log_archive_format:
+        type: str
+        default: bz2
+        choices:
+          - bz2
+          - gz
+          - xz
+          - tar
+          - zip
+        description: Compression format passed to community.general.archive.
+      log_from:
+        type: str
+        default: awx@tower.example.com
+        description: Sender address.
+      log_to:
+        type: str
+        default: log_team@example.com
+        description: Recipient address.
+      log_email_host:
+        type: str
+        default: email-smtp.us-east-1.amazonaws.com
+        description: SMTP server the controller sends through.
+      log_email_port:
+        type: int
+        default: 25
+        description: SMTP server port.
+      log_email_username:
+        type: str
+        description: SMTP username. Unauthenticated when unset.
+      log_email_password:
+        type: str
+        description: SMTP password. Unauthenticated when unset.

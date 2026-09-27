@@ -18,6 +18,14 @@ log_email_host: email-smtp.us-east-1.amazonaws.com
 log_email_port: 25
 ```
 
+The archive is fetched into a `logs/` directory next to your playbook and
+e-mailed from the controller, which needs `community.general`. The
+controller-side tasks never use privilege escalation, so the role works in
+plays that set `become: true` to read root-owned logs.
+
+Tested with Molecule on EL 9/10, Amazon Linux 2023, Ubuntu 22.04/24.04/26.04,
+and Debian 12/13 (the e-mail step is skipped in CI).
+
 Optionally, set SMTP credentials at runtime by setting values for `log_email_username` and `log_email_password`. Otherwise, the role defaults to unauthenticated connections to the SMTP server.
 
 

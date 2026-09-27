@@ -1,5 +1,4 @@
 ---
-
 name: CI
 'on':
   pull_request:
@@ -7,41 +6,62 @@ name: CI
     branches:
       - main
 
-defaults:
-  run:
-    working-directory: 'deekayen.log_mailer'
-
 jobs:
 
   lint:
     name: Lint
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-latest
     steps:
       - name: Check out the codebase.
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
+
+      - name: Set up Python 3.
+        uses: actions/setup-python@v5
         with:
-          path: 'deekayen.log_mailer'
+          python-version: '3.12'
 
       - name: Install test dependencies.
-        run: python -m pip install --user ansible ansible-lint
+        run: pip3 install ansible-lint flake8
 
-      - name: Lint ansible.
-        run: ansible-lint
+      - name: Install role dependencies.
+        run: ansible-galaxy install -r molecule/default/requirements.yml
 
-  syntax:
-    name: Syntax check
-    runs-on: ubuntu-20.04
+      - name: Lint code.
+        run: ansible-lint --profile production
+
+      - name: Lint Python tests.
+        run: flake8 molecule/
+
+  molecule:
+    name: Molecule
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        distro:
+          - rockylinux9
+          - rockylinux10
+          - amazonlinux2023
+          - ubuntu2204
+          - ubuntu2404
+          - ubuntu2604
+          - debian12
+          - debian13
+
     steps:
       - name: Check out the codebase.
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
+
+      - name: Set up Python 3.
+        uses: actions/setup-python@v5
         with:
-          path: 'deekayen.log_mailer'
+          python-version: '3.12'
 
       - name: Install test dependencies.
-        run: python -m pip install --user ansible
+        run: pip3 install ansible-core molecule molecule-plugins[docker] docker pytest-testinfra
 
-      - name: Create ansible.cfg with correct roles_path
-        run: printf '[defaults]\nroles_path=../' >ansible.cfg
-
-      - name: Check syntax.
-        run: ansible-playbook tests/test.yml -i tests/inventory --syntax-check
+      - name: Run Molecule tests.
+        run: molecule test
+        env:
+          PY_COLORS: '1'
+          ANSIBLE_FORCE_COLOR: '1'
+          MOLECULE_DISTRO: ${{ matrix.distro }}

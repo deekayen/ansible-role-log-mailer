@@ -1,8 +1,7 @@
 ---
-
 galaxy_info:
-  role_name: log_mailer
   namespace: deekayen
+  role_name: log_mailer
   author: David Norman
   description: Email logs from a remote server.
 
@@ -10,15 +9,16 @@ galaxy_info:
   issue_tracker_url: https://github.com/deekayen/ansible-role-log-mailer/issues
 
   license: BSD-3-Clause
+  min_ansible_version: "2.15"
 
   platforms:
     - name: GenericLinux
       versions:
-        - any
+        - all
 
   galaxy_tags:
     - logs
-
-  min_ansible_version: 2.3
+    - email
+    - diagnostics
 
 dependencies: []

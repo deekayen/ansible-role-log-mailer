@@ -1,0 +1,23 @@
+---
+- name: Assert log_find_path is an absolute path.
+  ansible.builtin.assert:
+    that:
+      - log_find_path is match('^/')
+    fail_msg: "log_find_path must be an absolute path, got: {{ log_find_path }}"
+    quiet: true
+
+- name: Assert the sender and recipient look like e-mail addresses.
+  ansible.builtin.assert:
+    that:
+      - log_from is match('^[^@\s]+@[^@\s]+$')
+      - log_to is match('^[^@\s]+@[^@\s]+$')
+    fail_msg: "log_from and log_to must be e-mail addresses, got: {{ log_from }} / {{ log_to }}"
+    quiet: true
+
+- name: Assert log_email_port is a valid TCP port.
+  ansible.builtin.assert:
+    that:
+      - log_email_port | int >= 1
+      - log_email_port | int <= 65535
+    fail_msg: "log_email_port must be between 1 and 65535, got: {{ log_email_port }}"
+    quiet: true

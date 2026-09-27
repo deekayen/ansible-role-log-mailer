@@ -1,47 +1,56 @@
 ---
+- name: Validate role variables.
+  ansible.builtin.import_tasks: assert.yml
+  tags:
+    - always
 
 - name: Set archive_filename variable.
-  set_fact:
-    archive_filename: "{{ ansible_hostname }}_logs.tar.{{ log_archive_format }}"
+  ansible.builtin.set_fact:
+    archive_filename: "{{ ansible_facts.hostname }}_logs.tar.{{ log_archive_format }}"
 
 - name: Archive logs.
-  archive:
+  community.general.archive:
     path: "{{ log_find_path }}"
     dest: "/tmp/{{ archive_filename }}"
     format: "{{ log_archive_format }}"
-    mode: 0644
+    mode: "0644"
 
 - name: Fetch logs.
-  fetch:
+  ansible.builtin.fetch:
     src: "/tmp/{{ archive_filename }}"
     dest: logs
 
 - name: Find logs.
-  find:
+  ansible.builtin.find:
     paths: logs
     patterns: "{{ archive_filename }}"
-    recurse: yes
-  register: _logs
+    recurse: true
+  register: log_mailer_archives
   delegate_to: localhost
+  become: false
 
 - name: Send e-mail, attaching files.
-  mail:
+  community.general.mail:
     host: "{{ log_email_host }}"
     port: "{{ log_email_port }}"
     username: "{{ log_email_username | default(omit) }}"
     password: "{{ log_email_password | default(omit) }}"
-    subject: "[Ansible] Logs from {{ ansible_hostname }}"
-    body: "Attached are logs from {{ log_find_path }} on {{ ansible_fqdn }}."
+    subject: "[Ansible] Logs from {{ ansible_facts.hostname }}"
+    body: "Attached are logs from {{ log_find_path }} on {{ ansible_facts.fqdn }}."
     from: "{{ log_from }}"
     to: "{{ log_to }}"
     attach: "{{ item.path }}"
     charset: us-ascii
-  with_items: "{{ _logs.files }}"
+  loop: "{{ log_mailer_archives.files }}"
   delegate_to: localhost
+  become: false
+  tags:
+    - mail
 
 - name: Cleanup log archive.
-  file:
+  ansible.builtin.file:
     state: absent
     path: "{{ item.path }}"
-  with_items: "{{ _logs.files }}"
+  loop: "{{ log_mailer_archives.files }}"
   delegate_to: localhost
+  become: false
